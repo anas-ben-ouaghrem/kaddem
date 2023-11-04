@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 import tn.esprit.spring.kaddem.entities.Etudiant;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
-public interface EtudiantRepository extends CrudRepository<Etudiant,Integer> {
-    public List<Etudiant> findEtudiantsByDepartement_IdDepart(Integer idDepart);
-@Query("Select e From Etudiant e where e.nomE= :nomE and e.prenomE= :prenomE")
-    public Etudiant findByNomEAndPrenomE(@Param("nomE") String nomE, @Param("prenomE") String prenomE);
+public interface EtudiantRepository extends CrudRepository<Etudiant, Integer> {
+    List<Etudiant> findEtudiantsByDepartement_IdDepart(Integer idDepart);
+
+    @Query("Select e From Etudiant e where e.nomE= :nomE and e.prenomE= :prenomE")
+    Etudiant findByNomEAndPrenomE(@Param("nomE") String nomE, @Param("prenomE") String prenomE);
 }

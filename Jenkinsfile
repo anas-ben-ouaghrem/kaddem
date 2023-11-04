@@ -19,7 +19,7 @@ pipeline {
             steps{
                 script{
                     jacoco()
-                    def mvnHome = tool name: 'maven', type: 'maven'
+                    def mvnHome = tool name: 'maven-3', type: 'maven'
                     withSonarQubeEnv('sonar'){
                         sh "${mvnHome}/bin/mvn verify sonar:sonar"
                     }
