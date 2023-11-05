@@ -91,16 +91,15 @@ pipeline {
         stage("publish to nexus") {
             steps {
                 script {
-                    // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
                     artifactPath = "target/kaddem-0.0.1-SNAPSHOT.jar";
 
-                    echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+                    echo "*** File: ${artifactPath}, group: tn.esprit, packaging: jar, version 0.0.1-SNAPSHOT ***";
 
                     nexusArtifactUploader(
                             nexusVersion: NEXUS_VERSION,
                             protocol: NEXUS_PROTOCOL,
                             nexusUrl: NEXUS_URL,
-                            groupId: pom.groupId,
+                            groupId: 'tn.esprit',
                             version: ARTIFACT_VERSION,
                             repository: NEXUS_REPOSITORY,
                             credentialsId: NEXUS_CREDENTIAL_ID,
