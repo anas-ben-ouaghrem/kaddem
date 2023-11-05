@@ -74,7 +74,7 @@ pipeline {
                         def packaging = 'jar' // Replace with the packaging type if different
 
                         sh """
-                ${mvnHome}/bin/mvn deploy:deploy-file 
+                ${mvnHome}/bin/mvn deploy
                 -Durl=${env.NEXUS_PROTOCOL}://${env.NEXUS_URL}/repository/${env.NEXUS_REPOSITORY}/
                 -DrepositoryId=${env.NEXUS_REPOSITORY}
                 -DgroupId=${groupId}
