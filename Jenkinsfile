@@ -100,7 +100,7 @@ pipeline {
                             protocol: NEXUS_PROTOCOL,
                             nexusUrl: NEXUS_URL,
                             groupId: 'tn.esprit',
-                            version: ARTIFACT_VERSION,
+                            version: '0.0.1-SNAPSHOT',
                             repository: NEXUS_REPOSITORY,
                             credentialsId: NEXUS_CREDENTIAL_ID,
                             artifacts: [
