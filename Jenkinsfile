@@ -93,9 +93,7 @@ pipeline {
                 script {
                     // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
                     artifactPath = "target/kaddem-0.0.1-SNAPSHOT.jar";
-                    artifactExists = fileExists artifactPath;
 
-                    if(artifactExists) {
                         echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
 
                         nexusArtifactUploader(
@@ -115,8 +113,6 @@ pipeline {
                                 ]
                         );
 
-                    } else {
-                        error "*** File: ${artifactPath}, could not be found";
                     }
                 }
             }
