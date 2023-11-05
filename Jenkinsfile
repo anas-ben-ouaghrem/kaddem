@@ -26,23 +26,21 @@ pipeline {
                 }
             }
         }
-        stage("Quality gate status check") {
+
+        stage("Quality Gate") {
             steps {
-                script{
-                    sleep(30)
-                    timeout(time: 1, unit: 'HOURS') {
-                        def qg = waitForQualityGate()
-                        if(qg.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                        }
-                    }
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
+
         stage("Deploying jar to Nexus Repository"){
             steps{
                 script{
-                    nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: './target/kaddem-0.0.1-SNAPSHOT.jar']],mavenCoordinate: [artifactId: 'achat', groupId: 'tn.esprit.rh', packaging: 'jar', version: '1']]]
+                    nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: './target/kaddem-0.0.1-SNAPSHOT.jar']],mavenCoordinate: [artifactId: 'achat', groupId: 'tn.esprit.spring', packaging: 'jar', version: '1']]]
                 }
             }
         }
