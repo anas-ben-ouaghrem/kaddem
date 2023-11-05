@@ -43,8 +43,22 @@ pipeline {
 
         stage("Deploying jar to Nexus Repository"){
             steps{
-                script{
-                    nexusPublisher nexusInstanceId: 'nexus', nexusRepositoryId: 'maven-snapshots', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: './target/kaddem-0.0.1-SNAPSHOT.jar']],mavenCoordinate: [artifactId: 'achat', groupId: 'tn.esprit.spring', packaging: 'jar', version: '1']]]
+                script {
+                    nexusArtifactUploader(
+                            nexusVersion: ${NEXUS_VERSION},
+                            protocol: ${NEXUS_PROTOCOL},
+                            nexusUrl: ${NEXUS_URL},
+                            groupId: 'com.example',
+                            version: '1.0-SNAPSHOT',
+                            repository: ${NEXUS_REPOSITORY},
+                            credentialsId: ${NEXUS_CREDENTIAL_ID},
+                            artifacts: [
+                                    [artifactId: 'kaddem',
+                                     classifier: '',
+                                     file: 'kaddem' + version + '.jar',
+                                     type: 'jar']
+                            ]
+                    )
                 }
             }
         }
