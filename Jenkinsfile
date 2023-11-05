@@ -94,29 +94,29 @@ pipeline {
                     // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
                     artifactPath = "target/kaddem-0.0.1-SNAPSHOT.jar";
 
-                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+                    echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
 
-                        nexusArtifactUploader(
-                                nexusVersion: NEXUS_VERSION,
-                                protocol: NEXUS_PROTOCOL,
-                                nexusUrl: NEXUS_URL,
-                                groupId: pom.groupId,
-                                version: ARTIFACT_VERSION,
-                                repository: NEXUS_REPOSITORY,
-                                credentialsId: NEXUS_CREDENTIAL_ID,
-                                artifacts: [
-                                        // Artifact generated such as .jar, .ear and .war files.
-                                        [artifactId: 'kaddem',
-                                         classifier: '',
-                                         file: artifactPath,
-                                         type: 'jar']
-                                ]
-                        );
+                    nexusArtifactUploader(
+                            nexusVersion: NEXUS_VERSION,
+                            protocol: NEXUS_PROTOCOL,
+                            nexusUrl: NEXUS_URL,
+                            groupId: pom.groupId,
+                            version: ARTIFACT_VERSION,
+                            repository: NEXUS_REPOSITORY,
+                            credentialsId: NEXUS_CREDENTIAL_ID,
+                            artifacts: [
+                                    // Artifact generated such as .jar, .ear and .war files.
+                                    [artifactId: 'kaddem',
+                                     classifier: '',
+                                     file      : artifactPath,
+                                     type      : 'jar']
+                            ]
+                    );
 
-                    }
                 }
             }
         }
+
 
         stage('Email Notification') {
             steps {
@@ -128,6 +128,7 @@ pipeline {
                 }
             }
         }
+
         stage('Slack Notification') {
             steps {
                 script {
@@ -135,6 +136,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build And Deploy Docker Image') {
             steps {
                 script {
