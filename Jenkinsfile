@@ -3,7 +3,7 @@ pipeline {
     environment {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "http://192.168.1.13:8081"
+        NEXUS_URL = "192.168.1.13:8081"
         NEXUS_REPOSITORY = "maven-snapshots"
         NEXUS_CREDENTIAL_ID = "nexus-credentials"
     }
@@ -70,13 +70,13 @@ pipeline {
                         def mvnHome = tool name: 'maven-3', type: 'maven'
                         def groupId = 'tn.esprit' // Replace with your project's group ID
                         def artifactId = 'kaddem' // Replace with your project's artifact ID
-                        def version = '1.0-SNAPSHOT' // Replace with the version of your artifact
+                        def version = '0.0.1-SNAPSHOT' // Replace with the version of your artifact
                         def packaging = 'jar' // Replace with the packaging type if different
 
                         sh """
                 ${mvnHome}/bin/mvn deploy:deploy-file 
                 -Durl=${env.NEXUS_PROTOCOL}://${env.NEXUS_URL}/repository/${env.NEXUS_REPOSITORY}/
-                -DrepositoryId=${env.NEXUS_CREDENTIAL_ID}
+                -DrepositoryId=${env.NEXUS_REPOSITORY}
                 -DgroupId=${groupId}
                 -DartifactId=${artifactId}
                 -Dversion=${version}
