@@ -24,7 +24,7 @@ pipeline {
             }
             post {
                 always {
-                    junit '**/target/surefire-reports/TEST-*.xml'
+                    junit '**/target/surefire-reports/TEST*.xml'
                 }
             }
         }
@@ -63,30 +63,72 @@ pipeline {
             }
         }
 
-        stage("Deploying jar to Nexus Repository") {
+//        stage("Deploying jar to Nexus Repository") {
+//            steps {
+//                script {
+//                    script {
+//                        def mvnHome = tool name: 'maven-3', type: 'maven'
+//                        def groupId = 'tn.esprit' // Replace with your project's group ID
+//                        def artifactId = 'kaddem' // Replace with your project's artifact ID
+//                        def version = '0.0.1-SNAPSHOT' // Replace with the version of your artifact
+//                        def packaging = 'jar' // Replace with the packaging type if different
+//
+//                        sh """
+//                ${mvnHome}/bin/mvn deploy
+//                -Durl=${env.NEXUS_PROTOCOL}://${env.NEXUS_URL}/repository/${env.NEXUS_REPOSITORY}/
+//                -DrepositoryId=${env.NEXUS_REPOSITORY}
+//                -DgroupId=${groupId}
+//                -DartifactId=${artifactId}
+//                -Dversion=${version}
+//                -Dpackaging=${packaging}
+//                -Dfile=target/${artifactId}-${version}.${packaging}
+//            """
+//                    }
+//                }
+//            }
+//        }
+
+        stage("publish to nexus") {
             steps {
                 script {
-                    script {
-                        def mvnHome = tool name: 'maven-3', type: 'maven'
-                        def groupId = 'tn.esprit' // Replace with your project's group ID
-                        def artifactId = 'kaddem' // Replace with your project's artifact ID
-                        def version = '0.0.1-SNAPSHOT' // Replace with the version of your artifact
-                        def packaging = 'jar' // Replace with the packaging type if different
+                    // Read POM xml file using 'readMavenPom' step , this step 'readMavenPom' is included in: https://plugins.jenkins.io/pipeline-utility-steps
+                    pom = readMavenPom file: "pom.xml";
+                    // Find built artifact under target folder
+                    filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+                    // Print some info from the artifact found
+                    echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length} ${filesByGlob[0].lastModified}"
+                    // Extract the path from the File found
+                    artifactPath = filesByGlob[0].path;
+                    // Assign to a boolean response verifying If the artifact name exists
+                    artifactExists = fileExists artifactPath;
 
-                        sh """
-                ${mvnHome}/bin/mvn deploy
-                -Durl=${env.NEXUS_PROTOCOL}://${env.NEXUS_URL}/repository/${env.NEXUS_REPOSITORY}/
-                -DrepositoryId=${env.NEXUS_REPOSITORY}
-                -DgroupId=${groupId}
-                -DartifactId=${artifactId}
-                -Dversion=${version}
-                -Dpackaging=${packaging}
-                -Dfile=target/${artifactId}-${version}.${packaging}
-            """
+                    if(artifactExists) {
+                        echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}";
+
+                        nexusArtifactUploader(
+                                nexusVersion: NEXUS_VERSION,
+                                protocol: NEXUS_PROTOCOL,
+                                nexusUrl: NEXUS_URL,
+                                groupId: pom.groupId,
+                                version: ARTIFACT_VERSION,
+                                repository: NEXUS_REPOSITORY,
+                                credentialsId: NEXUS_CREDENTIAL_ID,
+                                artifacts: [
+                                        // Artifact generated such as .jar, .ear and .war files.
+                                        [artifactId: pom.artifactId,
+                                         classifier: '',
+                                         file: artifactPath,
+                                         type: pom.packaging]
+                                ]
+                        );
+
+                    } else {
+                        error "*** File: ${artifactPath}, could not be found";
                     }
                 }
             }
         }
+
         stage('Email Notification') {
             steps {
                 script {
