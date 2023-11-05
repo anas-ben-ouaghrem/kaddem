@@ -45,7 +45,7 @@ pipeline {
             steps{
                 script {
                     def mvnHome = tool name: 'maven-3', type: 'maven'
-                    sh "mvn deploy:deploy-file -Durl=${env.NEXUS_REPO_URL} -DrepositoryId=${env.NEXUS_REPO_ID} -Dfile=${env.POM_FILE}"
+                    sh "mvn deploy:deploy-file -Durl=${env.NEXUS_URL} -DrepositoryId=${env.NEXUS_REPOSITORY} "
                 }
             }
         }
