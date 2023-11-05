@@ -44,7 +44,8 @@ pipeline {
         stage("Deploying jar to Nexus Repository"){
             steps{
                 script {
-                    mvn deploy
+                    def mvnHome = tool name: 'maven-3', type: 'maven'
+                    sh "${mvnHome}/bin/mvn deploy"
                 }
             }
         }
